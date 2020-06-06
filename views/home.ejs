@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>video call webRtc</title>
+</head>
+<body>
+    <video id='video1' height="500" width="500" controls ></video>
+    <video id='video2' height="500" width="500" controls ></video>
+    <!-- <h2 id='text1'></h1> -->
+    <textarea rows="40" cols="300" id='text1'></textarea>
+    <input id='text2'></input>
+    <button id='btnConnect' >call</button>
+    <!-- <button onClick="openCamera()" >openCamera</button> -->
+        
+</body>
+<pre id="outgoing"></pre>
+    <script src="simplepeer.min.js"></script>
+    <script>
+        playVideo = (stream, id) => {
+            const video = document.getElementById(id);
+            console.log('videozzz', video)
+            video.srcObject = stream;
+            video.onloadedmetadata = function() {video.play()}
+        }
+
+        navigator.mediaDevices.getUserMedia({audio: false, video: true})
+            .then((stream) => {
+            playVideo(stream, 'video1')
+            const peer = new SimplePeer({
+                initiator: location.hash === '#1',
+                trickle: false,
+                stream,
+            })
+
+            console.log('oooooo', peer)
+
+            peer.on('signal', token => {
+                console.log('123123', token);
+                document.getElementById('text1').value = JSON.stringify(token);
+
+                // const div = document.getElementById('text1');
+                // div.innerHTML += JSON.stringify(token);
+            })
+
+            peer.on('stream', friendStream => {
+                console.log('zzzxxxx')
+
+                playVideo(friendStream, 'video2')
+                })
+            // click = () => {
+            //     let signalConnect = document.getElementById("text2").value
+            //     console.log('ggg', signalConnect)
+            //     peer.signal(JSON.parse(signalConnect));
+            // }
+            document.getElementById('btnConnect').onclick = click;
+            function click() {
+                console.log('qqqqqq', document.getElementById("text2").value);
+                
+                const signalConnect = JSON.parse(`${document.getElementById("text2").value}`);
+                console.log('ggg', signalConnect, document.getElementById("text2").value);
+                peer.signal(signalConnect)
+            }
+            })
+            .catch((err) => {
+            console.log('err', err)
+            });
+           
+     
+    //   document.querySelector('form').addEventListener('submit', ev => {
+    //     ev.preventDefault()
+    //     p.signal(JSON.parse(document.querySelector('#incoming').value))
+    //   })
+
+    //   p.on('connect', () => {
+    //     console.log('CONNECT')
+    //     p.send('whatever' + Math.random())
+    //   })
+
+    //   p.on('data', data => {
+    //     console.log('data: ' + data)
+    //   })
+    </script>
+</html>
