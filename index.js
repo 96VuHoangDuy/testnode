@@ -5,7 +5,7 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static('public'));
 
-app.get('/home', (req, res) => {
+app.get('/', (req, res) => {
   res.render('home');
 });
 // const server = require('http').Server(app);
