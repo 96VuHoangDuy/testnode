@@ -3,7 +3,7 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.set('Views', './Views');
-app.use(express.static('public'));
+app.use('/static', express.static('public'));
 
 app.get('/', (req, res) => {
   res.render('home');
