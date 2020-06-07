@@ -9,7 +9,7 @@
     <video id='video1' height="500" width="500" controls ></video>
     <video id='video2' height="500" width="500" controls ></video>
     <!-- <h2 id='text1'></h1> -->
-    <h1 rows="40" cols="300" id='text1'></h1>
+    <textarea rows="1" cols="300" id='text1'></textarea>
     <input id='text2'></input>
     <button id='btnConnect' >call</button>
     <!-- <button onClick="openCamera()" >openCamera</button> -->
@@ -31,15 +31,15 @@
     <script src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"></script>
 
     <script>
-        const peer = require('peerjs')
+        // const Peer = require('peer')
+        const peer = new Peer(getIdPeer(), {host: 'git.heroku.com/vuhoangduy.git', port: 4000, secure: true, key: 'peerjs'})
 
         function getIdPeer(){
-            const customGenerationFunction = () => (Math.random().toString(36) + '0000000000000000000').substr(2, 16);
+            const customGenerationFunction =  (Math.random().toString(36) + '0000000000000000000').substr(2, 16);
             document.getElementById('text1').value = customGenerationFunction;
             return customGenerationFunction
         }
         
-        const peer = new Peer(getIdPeer(), {host: 'git.heroku.com/vuhoangduy.git', port: 4000, secure: true, key: 'peerjs'})
 
 
         playVideo = (stream, id) => {
@@ -49,18 +49,26 @@
             video.onloadedmetadata = function() {video.play()}
         }
 
-        navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream) => {
-            call.answer(stream)
-            call.on('stream', playVideo(stream, 'video2'))
-        })
-
-        navigator.mediaDevices.getUserMedia({audio: true, video: true})
-            .then((stream) => {
+        // navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream) => {
+        //     call.answer(stream)
+        //     call.on('stream', playVideo(stream, 'video2'))
+        // })
+        var getUserMedia = navigator.getUserMedia
+        document.getElementById('btnConnect').onclick = click    
+        function click(){
+        getUserMedia({audio: false, video: true},
+        function(stream) {
+            // .then((stream) => {
+            playVideo(stream, 'video1')
             const id = document.getElementById("text2").value
             console.log('id', id)
             const call = peer.call(id, stream);
             // playVideo(stream, 'video1')
-            call.on('stream',playVideo(stream, 'video1'))
+            call.on('stream', function(remoteStream){
+                playVideo(remoteStream, 'video2')
+                    })
+                })
+            }
             // const peer = new SimplePeer({
             //     initiator: location.hash === '#1',
             //     trickle: false,
@@ -68,7 +76,7 @@
             // })
            
 
-            console.log('oooooo', peer)
+            // console.log('oooooo', peer)
 
             // peer.on('signal', token => {
             //     console.log('123123', token);
@@ -76,7 +84,7 @@
 
                 // const div = document.getElementById('text1');
                 // div.innerHTML += JSON.stringify(token);
-            })
+            // })
 
             // peer.on('stream', friendStream => {
             //     console.log('zzzxxxx')
@@ -92,8 +100,9 @@
             //     peer.signal(signalConnect)
             // }
             // })
-            .catch((err) => {
-            console.log('err', err)
-            });
+            // .catch((err) => {
+            // console.log('err', err)
+            // })
+        
     </script>
 </html>
